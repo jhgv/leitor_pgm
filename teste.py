@@ -27,26 +27,28 @@
 # import matplotlib.pyplot as plt
 from struct import unpack
 import numpy as np
+import shutil
 
 class Imagem:
-    def __init__(self, nome=None, arquivo=None, vetor=None):
-        
-        self.nome = nome
-        self.vetor = vetor
 
     def carregar(self):
         nome = raw_input("Informe o nome da imagem \n")
+        self.nome = nome
         local = raw_input('informe o local do arquivo: \n')
+        self.local = local
         arquivo = open(local + nome,"rb")
 
         tipo = arquivo.readline()
+        self.tipo = tipo
         dimensao = arquivo.readline()
-        tons = int(arquivo.readline())
+        tons = arquivo.readline()
+        self.tons = tons
 
         valores = dimensao.split(" ")
         m, n = int(valores[0]), int(valores[1])
 
         dimen = (m,n)
+        self.dimensao = dimen
 
         matriz = np.zeros(dimen)
 
@@ -65,13 +67,17 @@ class Imagem:
 
 
     def realceNegativo(self):
-        vetorAux = self.vetor
-        L = len(vetorAux)
+        # print "antes"
+        print self.vetor
+        lista = []
+        L = len(self.vetor)
         for i in range(L):
-            novoValor = (L - 1) - i
-            vetorAux[i] = novoValor
+            valorAtual = self.vetor[i]
+            novoValor = L - 1 - valorAtual
+            lista.append(novoValor)
+            self.vetor.put(i,novoValor)
 
-        self.vetor = vetorAux
+        print self.vetor
 
     def realceContraste(self):
         print "realce de contraste aplicado."
@@ -80,10 +86,23 @@ class Imagem:
         print "Histograma salvo."
 
     def salvar(self):
-        self.arquivo.close()
+        # for i in range(256):
+        #     byte = arquivo.read(1)
+        #     unpacked = pack("b", byte)
+        #     img_vet[i] = unpacked[0]
+        self.arquivo = open(self.local + self.nome,"r+")
+        self.arquivo.seek(1,2)
+        self.arquivo.write("oi")
         print "Arquivo salvo"
 
     def salvarComo(self):
+        nome = raw_input("Informe o nome da imagem \n")
+        local = raw_input('informe o local do arquivo: \n')
+        arquivoVelho = open(self.nome + self.local, "rb")
+        arquivoNovo = open(local + nome,"w+")
+        shutil.copyfileobj(arquivoVelho, arquivoNovo)
+        arquivo = self.arquivo
+        arquivo.close()
         print "Arquivo salvo como"
 
 
@@ -123,6 +142,7 @@ def nome(): #Fun??o para pedir o nome do arquivo toda vez que for pedido.
 
 def podeLerComando(imagem, comando):
     if comando > 1 and comando < 7 and imagem == None:
+        print "Primeiro, carregue a imagem"
         return False
     else:
         return True
@@ -163,7 +183,7 @@ if __name__ == "__main__":
     comando = input()
 
     while comando != 7:
-        if(podeLerComando(comando, imagem)):
+        if(podeLerComando(comando=comando, imagem=imagem)):
             if comando == 1:
                 imagem = Imagem()
                 imagem.carregar()
