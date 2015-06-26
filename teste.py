@@ -32,12 +32,17 @@ import shutil
 class Imagem:
 
     def carregar(self):
+        # Le nome do arquivo
         nome = raw_input("Informe o nome da imagem \n")
         self.nome = nome
+         # Le local do arquivo
         local = raw_input('informe o local do arquivo: \n')
         self.local = local
+
+        # cria instancia para o arquivo em pgm (formato binario)
         arquivo = open(local + nome,"rb")
 
+        # capta os parametros da imagem: tipo, dimensao e tons
         tipo = arquivo.readline()
         self.tipo = tipo
         dimensao = arquivo.readline()
@@ -46,14 +51,14 @@ class Imagem:
 
         valores = dimensao.split(" ")
         m, n = int(valores[0]), int(valores[1])
-
         dimen = (m,n)
         self.dimensao = dimen
+        #-----------------------------------------------------
 
-        matriz = np.zeros(dimen)
-
+        # Vetor em formato binario para trabalhar com a imagem
         img_vet = np.empty((256), dtype="b")
         
+        # Armazenas a iamgem em binario no vetor do numpy
         for i in range(len(img_vet)):
             byte = arquivo.read(1)
             unpacked = unpack("b", byte)
@@ -62,7 +67,6 @@ class Imagem:
         self.arquivo = arquivo
 
         self.vetor = img_vet
-
         print("Imagem Carregada...")
 
 
@@ -105,65 +109,12 @@ class Imagem:
         arquivo.close()
         print "Arquivo salvo como"
 
-
-
-def nome(): #Fun??o para pedir o nome do arquivo toda vez que for pedido.
-    return raw_input('Digite o nome do arquivo: ')
-
-
-# def carregar(): #Fun??o para carregar o arquivo.
-#     #Pedindo ao usu?rio para informar o arquivo
-#     # arq = nome()
-#     #Pedindo ao usu?rio para informar o local
-
-#     #Abrindo a imagem em Bin?rio
-#     arquivo = open(lArq ,"rb")
-#     # with open("exemplos_pgm/einstein.pgm",'rb') as f:
-#     tipo = arquivo.readline()
-#     dimensao = arquivo.readline()
-#     tons = int(arquivo.readline())
-
-#     valores = dimensao.split(" ")
-#     m, n = int(valores[0]), int(valores[1])
-
-#     dimen = (m,n)
-
-#     matriz = np.zeros(dimen)
-
-#     img_vet = np.empty((256), dtype="b")
-    
-#     for i in range(len(img_vet)):
-#         byte = arquivo.read(1)
-#         unpacked = unpack("b", byte)
-#         img_vet[i] = unpacked[0]
-
-#     print("Imagem Carregada...")
-    return arquivo
-
 def podeLerComando(imagem, comando):
     if comando > 1 and comando < 7 and imagem == None:
         print "Primeiro, carregue a imagem"
         return False
     else:
         return True
-
-##Fun??o para salvar o arquivo.
-# def salvar(arq):
-#     #Usando close para fechar e, com isso, salvar o arquivo.
-#     arq.close()
-#     print ('Arquivo Salvo')
-
-##Fun??o para salvar o arquivo em local definido pelo usu?rio.
-# def salvarComo(arq):
-#     print ('Para salvar como')
-#     newArq = nome()
-#     newLarq = local()
-
-#     #Criando novo arquivo em bin?rio
-#     newArq = open(newLarq,'wb')
-#     arq.close()
-#     newArq.close()
-
 
 
 
@@ -183,6 +134,7 @@ if __name__ == "__main__":
     comando = input()
 
     while comando != 7:
+        # Verifica se a imagem ja foi carregada
         if(podeLerComando(comando=comando, imagem=imagem)):
             if comando == 1:
                 imagem = Imagem()
